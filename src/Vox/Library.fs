@@ -98,7 +98,7 @@ module private TernaryOp =
     let inline reset (a: ISignal) (b: ISignal) (c: ISignal) =
         a.Reset()
         b.Reset()
-        b.Reset()
+        c.Reset()
     
 type Constant(value: float32) =
     interface ISignal with
