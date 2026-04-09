@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Library.fs" />
     <Compile Include="Program.fs" />
     <None Include="Sandbox.fsx" />
   </ItemGroup>
