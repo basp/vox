@@ -5,5 +5,6 @@
 * Correctness over performance, unless performance is a critical aspect of the code.
 * Explain the mathematical or DSP context before showing code: aim for a "bottom-up" learning path.
 * Keep in mind that the user is not an expert in DSP or audio programming.
+* The user is familiar with F# so feel free to suggest more advanced patterns where appropriate.
 * Feel free to push back on bad ideas but try to be constructive.
 * When in doubt, refer to the [Zen of Python](https://peps.python.org/pep-0020/) for general principles of code style.
