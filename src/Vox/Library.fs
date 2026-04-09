@@ -52,8 +52,16 @@ type ISignal =
     abstract member Fill: ctx: RenderContext * buffer: Span<float32> -> unit
     abstract member Reset: unit -> unit
 
-type IOscillator =
-    abstract member Frequency: float32 with get, set
+type Parameter(initial: float32) =
+    let mutable value = initial
+    member _.Value
+        with get() = value
+        and set v = value <- v
+    interface ISignal with
+        member _.Fill(_, buffer) =
+            buffer.Fill(value)
+        member _.Reset() =
+            ()
 
 module private Interpolate =
     let inline lerp (a: float32) (b: float32) (t: float32) =
@@ -100,13 +108,6 @@ module private TernaryOp =
         b.Reset()
         c.Reset()
     
-type Constant(value: float32) =
-    interface ISignal with
-        member _.Fill(_, buffer) =
-            buffer.Fill(value)
-        member _.Reset() =
-            ()
-        
 type Scale(signal: ISignal, factor: float32) =
     interface ISignal with
         member _.Fill(ctx, buffer) =
@@ -163,3 +164,43 @@ type Mix(a: ISignal, b: ISignal, control: ISignal) =
 
         member _.Reset() =
             TernaryOp.reset a b control
+
+[<AbstractClass>]
+type Oscillator(frequency: ISignal) =
+    let mutable phase = 0.0f
+    
+    abstract member Shape: phase: float32 -> float32
+    
+    interface ISignal with
+        member this.Fill(ctx, buffer) =
+            use scratch = ctx.Scratch.GetBuffer(buffer.Length)
+            let tmp = scratch.Segment.AsSpan()
+            frequency.Fill(ctx, tmp)
+            for i in 0..buffer.Length - 1 do
+                buffer[i] <- this.Shape(phase)
+                let next = phase + tmp[i] / ctx.SampleRate
+                phase <- next - MathF.Floor(next)
+        
+        member _.Reset() =
+            phase <- 0.0f
+            frequency.Reset()
+
+type Sine(frequency: ISignal) =
+    inherit Oscillator(frequency)
+    override _.Shape(phase) =
+        MathF.Sin(phase * 2.0f * MathF.PI)
+
+type Saw(frequency: ISignal) =
+    inherit Oscillator(frequency)
+    override _.Shape(phase) =
+        phase * 2.0f - 1.0f
+
+type Triangle(frequency: ISignal) =
+    inherit Oscillator(frequency)
+    override _.Shape(phase) =
+        (MathF.Abs(phase * 2.0f - 1.0f) * 2.0f) - 1.0f
+
+type Square(frequency: ISignal) =
+    inherit Oscillator(frequency)
+    override _.Shape(phase) =
+        if phase < 0.5f then 1.0f else -1.0f

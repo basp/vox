@@ -14,8 +14,8 @@ let ctx = {
     SampleRate = sampleRate
 }
 
-// Let's create a simple signal: (Constant 0.5 + Constant 0.2) * 0.5
-let signal = Scale(Add(Constant(0.5f), Constant(0.2f)), 0.5f) :> ISignal
+// Let's create a simple signal: (Parameter 0.5 + Parameter 0.2) * 0.5
+let signal = Scale(Add(Parameter(0.5f), Parameter(0.2f)), 0.5f) :> ISignal
 
 let buffer = Array.zeroCreate<float32> 10
 
