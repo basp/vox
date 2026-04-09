@@ -42,8 +42,8 @@ type StackBufferProvider(maxCapacity: int) =
     
     interface IScratchProvider with
         member _.GetBuffer(length) =
-            if currentOffset + length > maxCapacity then
-                failwith "Scratch pool exhausted!"
+            if currentOffset + length > maxCapacity
+            then failwith "Scratch pool exhausted!"
             let start = currentOffset
             currentOffset <- currentOffset + length
             new StackBuffer(pool, start, length, fun () -> currentOffset <- start)
@@ -60,7 +60,7 @@ module private Interpolate =
         a + (b - a) * t
 
 module private BinaryOp =
-    let inline withRented
+    let inline rent
         (ctx: RenderContext)
         (a: ISignal)
         (b: ISignal)
@@ -78,7 +78,7 @@ module private BinaryOp =
         b.Reset()
     
 module private TernaryOp =
-    let inline withRented
+    let inline rent
         (ctx: RenderContext)
         (a: ISignal)
         (b: ISignal)
@@ -139,7 +139,7 @@ type Clamp(signal: ISignal, min: float32, max: float32) =
 type Multiply(a: ISignal, b: ISignal) =
     interface ISignal with
         member _.Fill(ctx, buffer) =
-            BinaryOp.withRented ctx a b (*) buffer
+            BinaryOp.rent ctx a b (*) buffer
 
         member _.Reset() =
             BinaryOp.reset a b
@@ -147,7 +147,7 @@ type Multiply(a: ISignal, b: ISignal) =
 type Add(a: ISignal, b: ISignal) =
     interface ISignal with
         member _.Fill(ctx, buffer) =
-            BinaryOp.withRented ctx a b (+) buffer
+            BinaryOp.rent ctx a b (+) buffer
 
         member _.Reset() =
             BinaryOp.reset a b
@@ -159,7 +159,7 @@ type Mix(a: ISignal, b: ISignal, control: ISignal) =
         
     interface ISignal with        
         member _.Fill(ctx, buffer) =
-            TernaryOp.withRented ctx a b control mix buffer
+            TernaryOp.rent ctx a b control mix buffer
 
         member _.Reset() =
             TernaryOp.reset a b control            
