@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/Vox.Tests/Vox.Tests.fsproj" />
     <Project Path="src/Vox/Vox.fsproj" />
   </Folder>
 </Solution>
