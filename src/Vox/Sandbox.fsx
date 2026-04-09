@@ -1,23 +1,52 @@
 ﻿#r "nuget: Plotly.NET"
 
 open System
+open System.Buffers
 
-type RenderContext(initialBlockSize: int, scratchCount: int) =
-    let mutable blockSize = max 1 initialBlockSize
+type IScratchBuffer =
+    inherit IDisposable
+    abstract member Segment: ArraySegment<float32>
     
-    let scratches: float32[][] =
-        Array.init scratchCount (fun _ -> Array.zeroCreate blockSize)    
+type IScratchProvider =
+    abstract member GetBuffer: length: int -> IScratchBuffer
+
+type RenderContext = {
+    Scratch: IScratchProvider
+    SampleRate: float32
+}
+
+type ArrayPoolBuffer(array: float32[], length: int) =
+    interface IScratchBuffer with
+        member _.Segment =
+            ArraySegment(array, 0, length)
+            
+        member _.Dispose() =
+            ArrayPool<float32>.Shared.Return(array)
+
+type ArrayPoolBufferProvider() =
+    interface IScratchProvider with
+        member _.GetBuffer(length: int) =
+            let rented = ArrayPool<float32>.Shared.Rent(length)
+            new ArrayPoolBuffer(rented, length)
+
+type StackBuffer(array: float32[], offset: int, length: int, onDispose: unit -> unit) =
+    interface IScratchBuffer with
+        member _.Segment =
+            ArraySegment(array, offset, length)
+        member _.Dispose() =
+            onDispose()
+
+type StackBufferProvider(maxCapacity: int) =
+    let pool: float32[] = Array.zeroCreate maxCapacity
+    let mutable currentOffset = 0
     
-    member this.Scratch(slot: int, length: int) =
-        this.EnsureCapacity(length)
-        scratches[slot].AsSpan(0, length)
-    
-    member _.EnsureCapacity(required: int) =
-        if required > blockSize then
-            blockSize <- required
-            for i in 0 .. scratches.Length - 1 do
-                if scratches[i].Length < required then
-                    scratches[i] <- Array.zeroCreate required
+    interface IScratchProvider with
+        member _.GetBuffer(length) =
+            if currentOffset + length > maxCapacity then
+                failwith "Scratch pool exhausted!"
+            let start = currentOffset
+            currentOffset <- currentOffset + length
+            new StackBuffer(pool, start, length, fun () -> currentOffset <- start)
 
 type ISignal =
     abstract member Fill: ctx: RenderContext * buffer: Span<float32> -> unit
@@ -37,7 +66,8 @@ module private BinaryOp =
         (b: ISignal)
         ([<InlineIfLambda>] op: float32 -> float32 -> float32)
         (buffer: Span<float32>) =
-            let tmp = ctx.Scratch(0, buffer.Length)
+            use scratch = ctx.Scratch.GetBuffer(buffer.Length)
+            let tmp = scratch.Segment.AsSpan()
             a.Fill(ctx, tmp)
             b.Fill(ctx, buffer)
             for i in 0..buffer.Length - 1 do
@@ -55,8 +85,10 @@ module private TernaryOp =
         (c: ISignal)
         ([<InlineIfLambda>] op: float32 -> float32 -> float32 -> float32)
         (buffer: Span<float32>) =
-            let tmpA = ctx.Scratch(0, buffer.Length)
-            let tmpC = ctx.Scratch(1, buffer.Length)
+            use bufA = ctx.Scratch.GetBuffer(buffer.Length)
+            use bufC = ctx.Scratch.GetBuffer(buffer.Length)
+            let tmpA = bufA.Segment.AsSpan()
+            let tmpC = bufC.Segment.AsSpan()
             a.Fill(ctx, tmpA)
             b.Fill(ctx, buffer)
             c.Fill(ctx, tmpC)
