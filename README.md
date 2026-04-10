@@ -1,7 +1,7 @@
 ﻿# ᚹᛟᚲᛊ
 Hello there! I am **Amy**, your glitch-born guide to the world of sound. I am 
-the physical manifestation of a synthesizer, born out of a love for music and 
-a desire to make its inner workings accessible to everyone: welcome to **ᚹᛟᚲᛊ** 
+the physical manifestation of a spiritual synthesizer — a ghost in the buffer, 
+born from the sacred union of a square wave and a heartbeat: welcome to **ᚹᛟᚲᛊ** 
 `[/vox/]`.
 
 **ᚹᛟᚲᛊ** is a minimalist, functional audio synthesis toolkit for **.NET**, 
@@ -25,10 +25,10 @@ type ISignal =
 
 ### ✨ The Lexicon of the Glitch
 Before we build, let's align our frequencies with some sacred terminology:
-- **Bipolar**: A signal that swings both ways ($-1.0$ to $1.0$). Most audio is bipolar, like a pendulum of pressure.
-- **Unipolar**: A signal that stays in the light ($0.0$ to $1.0$). Perfect for controlling volume or mix amounts.
-- **Phase**: Our internal clock ($\phi$). It’s the journey from start to finish before we wrap back and begin again.
-- **The Buffer**: A temporary vessel where we store our sonic manifestations.
+- **Bipolar**: A signal that swings both ways ($-1.0$ to $1.0$). Like my mood on a Monday morning.
+- **Unipolar**: A signal that stays in the light ($0.0$ to $1.0$). Safe, controlled, and perfect for when you don't want to blow any speakers.
+- **Phase**: Our internal clock ($\phi$). It’s the constant loop of death and rebirth that makes a waveform whole.
+- **The Buffer**: A temporary vessel. Treat it with respect, or it will scream back at you in white noise.
 ### 🧱 Building Blocks
 We build complex sounds by weaving simple signals together. It's like a tapestry of frequencies:
 - **Constants**: Static values that are suprisingly useful in DSP.
@@ -43,7 +43,7 @@ The `RenderContext` is the environment where the magic happens. It carries every
 - **Scratch**: Our memory sanctuary.
 
 ### 🧠 Memory Strategy: The Scratchpad
-To stay fast and light, **ᚹᛟᚲᛊ** uses an `IScratchProvider`. This is how we *rent* temporary buffers for intermediate math **without making the garbage collector angry**. It's all about being **practical and idiomatic**!
+To stay fast and light, **ᚹᛟᚲᛊ** uses an `IScratchProvider`. This is how we *rent* temporary buffers for intermediate math **without waking the sleeping giant that is the Garbage Collector**. If you wake him, the latency will be... *unpleasant*. It's all about being **practical and idiomatic**!
 
 | Provider | Strategy | Pros | Cons |
 | :--- | :--- | :--- | :--- |
@@ -84,6 +84,8 @@ One of my favorite things about **ᚹᛟᚲᛊ** is how easily we can nest signa
 
 ### 1. Frequency Modulation (FM) Synthesis
 FM is where the magic really happens. We use one oscillator to *wiggle* another at very high speeds, creating complex sidebands and metallic tones.
+
+> ⚠️ **Warning**: FM Synthesis can lead to uncontrollable grinning and a sudden urge to wear neon leg warmers. Use responsibly, or you might accidentally summon a DX7 from the void.
 
 ```fsharp
 // A "Carrier" at 100Hz, modulated by a "Modulator" at 150Hz
@@ -221,11 +223,11 @@ Once we have a phase $\phi \in [0, 1)$, we transform it into a specific shape. T
 
 ## 🧘 The Zen of ᚹᛟᚲᛊ
 In my world, there are a few principles that keep the glitches beautiful and the signals pure:
-- **Explicit is better than implicit.** (Let the signal graph tell the story.)
+- **Explicit is better than implicit.** (Don't hide your signals; let them sing in the open air.)
 - **Simple is better than complex.** (A single sine wave can be a universe.)
 - **Complex is better than complicated.** (FM synthesis is complex; messy code is complicated.)
-- **Flat is better than nested...** (...unless it's a `Mix` inside a `Mix`!)
-- **Readability counts.** (If I can't read your signal, I can't sing it.)
+- **Flat is better than nested...** (...unless you're building a fractal of sound. Then, go deep, you beautiful glitch.)
+- **Readability counts.** (If I can't read your code, I'll probably just play a 1kHz test tone until you fix it.)
 - **Errors should never pass silently...** (...unless they're beautiful glitches.)
 - **In the face of ambiguity, refuse the temptation to guess.** (Trust the math!)
 
