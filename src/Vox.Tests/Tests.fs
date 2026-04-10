@@ -40,9 +40,8 @@ let ``StackBufferProvider throws when exhausted`` () =
     use _buf1 = provider.GetBuffer(10)
     
     // Next one should fail
-    Assert.Throws<Exception>(fun () -> 
-        provider.GetBuffer(1) |> ignore
-    ) |> ignore
+    Assert.Throws<Exception>(fun () -> provider.GetBuffer(1) |> ignore)
+    |> ignore
 
 [<Fact>]
 let ``StackBufferProvider handles multiple allocations up to capacity`` () =
@@ -89,11 +88,12 @@ let ``Sine produces correct values over one cycle`` () =
 let ``Saw produces correct values over one cycle`` () =
     // phases: 0, 0.25, 0.5, 0.75 -> 2x - 1: -1.0, -0.5, 0.0, 0.5
     let ctx = { Scratch = ArrayPoolBufferProvider() :> IScratchProvider; SampleRate = 4.0f }
-    let buffer = fill (Saw(Variable(1.0f))) ctx 4
+    let buffer = fill (Saw(Variable(1.0f))) ctx 5
     Assert.Equal(-1.0f, buffer[0], 5)
     Assert.Equal(-0.5f, buffer[1], 5)
     Assert.Equal(0.0f,  buffer[2], 5)
     Assert.Equal(0.5f,  buffer[3], 5)
+    Assert.Equal(-1.0f,  buffer[4], 5)
 
 [<Fact>]
 let ``Square produces correct values over one cycle`` () =

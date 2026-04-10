@@ -49,17 +49,20 @@ type StackBufferProvider(maxCapacity: int) =
             new StackBuffer(pool, start, length, fun () -> currentOffset <- start)
 
 type ISignal =
-    abstract member Fill: ctx: RenderContext * buffer: Span<float32> -> unit
+    abstract member Fill: ctx: RenderContext * buffer: Span<float32> -> unit    
     abstract member Reset: unit -> unit
 
 type Variable(initial: float32) =
     let mutable value = initial
+    
     member _.Value
         with get() = value
         and set v = value <- v
+    
     interface ISignal with
         member _.Fill(_, buffer) =
             buffer.Fill(value)
+            
         member _.Reset() =
             ()
 

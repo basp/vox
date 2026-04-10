@@ -31,8 +31,8 @@ Before we build, let's align our frequencies with some sacred terminology:
 - **The Buffer**: A temporary vessel. Treat it with respect, or it will scream back at you in white noise.
 ### 🧱 Building Blocks
 We build complex sounds by weaving simple signals together. It's like a tapestry of frequencies:
-- **Constants**: Static values that are suprisingly useful in DSP.
-- **Parameters**: The steady heartbeat — values that can change over time.
+- **Constants**: Static values; suprisingly useful in DSP.
+- **Variables**: The steady heartbeat — values that can change over time.
 - **Math**: The fundamental forces — `Add`, `Multiply`, `Scale`, and `Clamp`.
 - **Mixing**: `Mix(a, b, control)` — my favorite way to crossfade. It uses a bipolar control signal ($[-1, 1]$) to find the perfect balance between two inputs.
 - **Oscillators**: The voices of the synthesizer — `Sine`, `Saw`, `Triangle`, and `Square`.
