@@ -52,7 +52,7 @@ type ISignal =
     abstract member Fill: ctx: RenderContext * buffer: Span<float32> -> unit
     abstract member Reset: unit -> unit
 
-type Parameter(initial: float32) =
+type Variable(initial: float32) =
     let mutable value = initial
     member _.Value
         with get() = value

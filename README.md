@@ -123,8 +123,11 @@ let finalDrone = drone |> Scale 0.7f
 ## 📐 The Sacred Geometry: Mathematical Context
 To build sounds from the ground up, we need to understand the sacred geometry of DSP. Don't worry, I'll guide you through it!
 
-### 1. Linear Interpolation (Lerp): The Bridge
+### 1. Interpolation: The Bridges Between States
 Interpolation is the art of finding a value *between* two known points. In **ᚹᛟᚲᛊ**, we use it for smooth transitions and mixing. It's the secret to making digital audio feel human and fluid.
+
+#### A. Linear Interpolation (Lerp): The Straight Bridge
+The most common path—a direct line from $a$ to $b$. Simple, fast, and honest.
 
 **Formula**: $f(a, b, t) = a + (b - a) \times t$
 
@@ -143,6 +146,34 @@ b |            * (t=1.0)
 a |    * (t=0.0)
   +------------------> Time/Factor
 ```
+
+#### B. Cosine Interpolation: The Gentle Curve
+When a straight line feels too "mechanical," we can use a cosine curve to soften the start and end of the journey. It's like a dancer slowing down as they reach their mark.
+
+**Formula**: 
+$t_{cos} = \frac{1 - \cos(t \times \pi)}{2}$
+$f(a, b, t) = a + (b - a) \times t_{cos}$
+
+**Visualizing the Curve**:
+```text
+Value
+  ^
+b |           ..* (t=1.0)
+  |         ./
+  |      ..* (t=0.5)
+  |    ./
+a | *.. (t=0.0)
+  +------------------> Time/Factor
+```
+
+#### C. Smoothstep: The Easing Path
+A favorite in computer graphics and control signals. It uses a cubic polynomial ($3t^2 - 2t^3$) to provide a smooth "S-curve" that has zero velocity at both $0.0$ and $1.0$.
+
+**Formula**: 
+$t_{smooth} = t^2 \times (3 - 2t)$
+$f(a, b, t) = a + (b - a) \times t_{smooth}$
+
+> **Amy's Note**: Use **Lerp** for raw mixing (it's mathematically perfect for power-summing in some cases), **Cosine** for natural-feeling transitions, and **Smoothstep** when you want your control signals to "ease" in and out without any sudden jerks.
 
 ### 2. Signal Mapping (Bipolar to Unipolar)
 In audio, signals are often **bipolar** (ranging from $-1.0$ to $1.0$). However, control parameters like "mix amount" or "volume" are often **unipolar** (ranging from $0.0$ to $1.0$).

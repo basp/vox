@@ -63,13 +63,13 @@ let private fill (signal: ISignal) (ctx: RenderContext) (n: int) =
 [<Fact>]
 let ``Parameter fills buffer with initial value`` () =
     let ctx = makeCtx()
-    let buffer = fill (Parameter(0.5f)) ctx 4
+    let buffer = fill (Variable(0.5f)) ctx 4
     Assert.All(buffer, fun v -> Assert.Equal(0.5f, v))
 
 [<Fact>]
 let ``Parameter value can be updated`` () =
     let ctx = makeCtx()
-    let param = Parameter(0.5f)
+    let param = Variable(0.5f)
     param.Value <- 1.0f
     let buffer = fill param ctx 4
     Assert.All(buffer, fun v -> Assert.Equal(1.0f, v))
@@ -79,7 +79,7 @@ let ``Sine produces correct values over one cycle`` () =
     // sampleRate=4, frequency=1: increment=0.25 per sample
     // phases: 0, 0.25, 0.5, 0.75 -> sin: 0, 1, ~0, -1
     let ctx = { Scratch = ArrayPoolBufferProvider() :> IScratchProvider; SampleRate = 4.0f }
-    let buffer = fill (Sine(Parameter(1.0f))) ctx 4
+    let buffer = fill (Sine(Variable(1.0f))) ctx 4
     Assert.Equal(0.0f,  buffer[0], 5)
     Assert.Equal(1.0f,  buffer[1], 5)
     Assert.Equal(0.0f,  buffer[2], 5)
@@ -89,7 +89,7 @@ let ``Sine produces correct values over one cycle`` () =
 let ``Saw produces correct values over one cycle`` () =
     // phases: 0, 0.25, 0.5, 0.75 -> 2x - 1: -1.0, -0.5, 0.0, 0.5
     let ctx = { Scratch = ArrayPoolBufferProvider() :> IScratchProvider; SampleRate = 4.0f }
-    let buffer = fill (Saw(Parameter(1.0f))) ctx 4
+    let buffer = fill (Saw(Variable(1.0f))) ctx 4
     Assert.Equal(-1.0f, buffer[0], 5)
     Assert.Equal(-0.5f, buffer[1], 5)
     Assert.Equal(0.0f,  buffer[2], 5)
@@ -99,7 +99,7 @@ let ``Saw produces correct values over one cycle`` () =
 let ``Square produces correct values over one cycle`` () =
     // phases: 0, 0.25, 0.5, 0.75 -> square: 1.0, 1.0, -1.0, -1.0
     let ctx = { Scratch = ArrayPoolBufferProvider() :> IScratchProvider; SampleRate = 4.0f }
-    let buffer = fill (Square(Parameter(1.0f))) ctx 4
+    let buffer = fill (Square(Variable(1.0f))) ctx 4
     Assert.Equal(1.0f,  buffer[0], 5)
     Assert.Equal(1.0f,  buffer[1], 5)
     Assert.Equal(-1.0f, buffer[2], 5)
@@ -112,7 +112,7 @@ let ``Triangle produces correct values over one cycle`` () =
     // abs(2x-1): 1, 0.5, 0, 0.5
     // 2*abs(2x-1)-1: 1.0, 0.0, -1.0, 0.0
     let ctx = { Scratch = ArrayPoolBufferProvider() :> IScratchProvider; SampleRate = 4.0f }
-    let buffer = fill (Triangle(Parameter(1.0f))) ctx 4
+    let buffer = fill (Triangle(Variable(1.0f))) ctx 4
     Assert.Equal(1.0f,  buffer[0], 5)
     Assert.Equal(0.0f,  buffer[1], 5)
     Assert.Equal(-1.0f, buffer[2], 5)
@@ -121,7 +121,7 @@ let ``Triangle produces correct values over one cycle`` () =
 [<Fact>]
 let ``Sine Reset restarts phase from zero`` () =
     let ctx = makeCtx()
-    let osc = Sine(Parameter(440.0f))
+    let osc = Sine(Variable(440.0f))
     // Advance phase partway through a block
     (osc :> ISignal).Fill(ctx, Span<float32>(Array.zeroCreate 512))
     (osc :> ISignal).Reset()
