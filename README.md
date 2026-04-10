@@ -10,7 +10,7 @@ synthesizer* — simple, readable, and deep. Whether you are a seasoned develope
 or a curious novice, I am here to help you to understand the magic of Digital 
 Signal Processing (DSP) through small, clear steps.
 
-## 🎵 Core Philosophy
+## 🎵 The Sacred Pulse: Core Philosophy
 Everything starts with a **Signal**. In my world, everything is an `ISignal`. 
 Think of it as a lazy, spiritual producer that only sings when you ask it to, 
 filling a **buffer** of audio data on demand.
@@ -22,6 +22,13 @@ type ISignal =
 ```
 
 > **Amy's Note**: I love how functional this is! By keeping signals lazy and stateful, we can build complex, evolving textures without losing our way in the glitch.
+
+### ✨ The Lexicon of the Glitch
+Before we build, let's align our frequencies with some sacred terminology:
+- **Bipolar**: A signal that swings both ways ($-1.0$ to $1.0$). Most audio is bipolar, like a pendulum of pressure.
+- **Unipolar**: A signal that stays in the light ($0.0$ to $1.0$). Perfect for controlling volume or mix amounts.
+- **Phase**: Our internal clock ($\phi$). It’s the journey from start to finish before we wrap back and begin again.
+- **The Buffer**: A temporary vessel where we store our sonic manifestations.
 ### 🧱 Building Blocks
 We build complex sounds by weaving simple signals together. It's like a tapestry of frequencies:
 - **Constants**: Static values that are suprisingly useful in DSP.
@@ -30,13 +37,13 @@ We build complex sounds by weaving simple signals together. It's like a tapestry
 - **Mixing**: `Mix(a, b, control)` — my favorite way to crossfade. It uses a bipolar control signal ($[-1, 1]$) to find the perfect balance between two inputs.
 - **Oscillators**: The voices of the synthesizer — `Sine`, `Saw`, `Triangle`, and `Square`.
 
-## 🛠️ The Engine
+## 🛠️ The Heart of the Machine: The Engine
 The `RenderContext` is the environment where the magic happens. It carries everything I need to breathe life into the signals:
 - **SampleRate**: The resolution of our reality. Essential for calculating frequencies and making filters behave.
 - **Scratch**: Our memory sanctuary.
 
 ### 🧠 Memory Strategy: The Scratchpad
-To stay fast and light, **ᚹᛟᚲᛊ** uses an `IScratchProvider`. This is how we "rent" temporary buffers for intermediate math without making the Garbage Collector angry. It's all about being practical and idiomatic!
+To stay fast and light, **ᚹᛟᚲᛊ** uses an `IScratchProvider`. This is how we *rent* temporary buffers for intermediate math **without making the garbage collector angry**. It's all about being **practical and idiomatic**!
 
 | Provider | Strategy | Pros | Cons |
 | :--- | :--- | :--- | :--- |
@@ -45,7 +52,7 @@ To stay fast and light, **ᚹᛟᚲᛊ** uses an `IScratchProvider`. This is how
 
 > **Glitch Tip**: If you're building a high-performance instrument, the `StackBufferProvider` is my go-to. Just remember to respect the LIFO (Last-In, First-Out) rule so the memory flows correctly!
 
-## 🚀 Quick Start
+## 🚀 Quick Start: Your First Manifestation
 Let's get our hands dirty (in a digital way)! Here is how you can build a simple modulated sine wave. It’s like a gentle vibrato:
 ```fsharp
 open Vox
@@ -73,10 +80,10 @@ synth.Fill(ctx, buffer.AsSpan())
 ```
 
 ## 🌌 Advanced Textures
-One of my favorite things about **ᚹᛟᚲᛊ** is how easily we can nest signals to create deep, spiritual textures. Let's look at some "spicier" recipes!
+One of my favorite things about **ᚹᛟᚲᛊ** is how easily we can nest signals to create deep, spiritual textures. Let's look at some *spicier* recipes!
 
 ### 1. Frequency Modulation (FM) Synthesis
-FM is where the magic really happens. We use one oscillator to "wiggle" another at very high speeds, creating complex sidebands and metallic tones.
+FM is where the magic really happens. We use one oscillator to *wiggle* another at very high speeds, creating complex sidebands and metallic tones.
 
 ```fsharp
 // A "Carrier" at 100Hz, modulated by a "Modulator" at 150Hz
@@ -90,7 +97,7 @@ let carrierFreq = Add(Parameter(100.0f), modulator)
 let fmSynth = Sine(carrierFreq)
 ```
 
-> **Amy's Note**: FM is the soul of 80s digital synths! Experiment with different frequency ratios to find those "glassy" or "gritty" sweet spots.
+> **Amy's Note**: FM is the soul of 80s digital synths! Experiment with different frequency ratios to find those *glassy* or *gritty* sweet spots.
 
 ### 2. The Glitch Drone
 We can layer multiple oscillators and crossfade between them using a slow control signal. This creates an evolving, breathing soundscape.
@@ -113,7 +120,7 @@ let finalDrone = drone |> Scale 0.7f
 
 > **Glitch Tip**: Try nesting a `Mix` *inside* another `Mix`! It's like a dream within a dream, but with more harmonics.
 
-## 📐 Mathematical Context
+## 📐 The Sacred Geometry: Mathematical Context
 To build sounds from the ground up, we need to understand the sacred geometry of DSP. Don't worry, I'll guide you through it!
 
 ### 1. Linear Interpolation (Lerp): The Bridge
@@ -180,6 +187,16 @@ Once we have a phase $\phi \in [0, 1)$, we transform it into a specific shape. T
  -1 |  /    \/      \
     +-------------------> Phase
 ```
+
+## 🧘 The Zen of ᚹᛟᚲᛊ
+In my world, there are a few principles that keep the glitches beautiful and the signals pure:
+- **Explicit is better than implicit.** (Let the signal graph tell the story.)
+- **Simple is better than complex.** (A single sine wave can be a universe.)
+- **Complex is better than complicated.** (FM synthesis is complex; messy code is complicated.)
+- **Flat is better than nested...** (...unless it's a `Mix` inside a `Mix`!)
+- **Readability counts.** (If I can't read your signal, I can't sing it.)
+- **Errors should never pass silently...** (...unless they're beautiful glitches.)
+- **In the face of ambiguity, refuse the temptation to guess.** (Trust the math!)
 
 ## ✨ Final Words
 I am so excited to see what you create with **ᚹᛟᚲᛊ**! Whether you're building a chaotic glitch-machine or a peaceful ambient pad, remember that every sound is a journey. 
