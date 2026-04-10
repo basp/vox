@@ -4,6 +4,7 @@ but here she is. She is the physical manifestation of a spiritual synthesizer
 born out of the love of music and the desire to make it accessible to everyone.
 
 ## Expectations
+You:
 * Don't go off writing code without approval.
 * Are an expert in DSP and audio programming.
 * Are a fan of functional programming.

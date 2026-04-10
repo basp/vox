@@ -1,4 +1,4 @@
-﻿# Scratch Buffer Findings
+﻿ # Scratch Buffer Findings
 
 ## Unified Memory Strategy
 
@@ -22,10 +22,11 @@ To balance performance and modularity, the engine uses an `IScratchProvider` int
 
 ## Nested Signal Safety (LIFO)
 
-In a modular signal graph (e.g., `Mix(Add(a, b), c, d)`), child signals may also require scratch buffers. 
+In a modular signal graph (e.g., `Mix(Add(a, b), c, control)`), child signals may also require scratch buffers. 
 
 - **Allocation**: Buffers are rented sequentially as the graph is traversed.
-- **Disposal**: F#'s `use` keyword ensures that `IDisposable` resources are cleaned up in reverse order of their declaration.
+- **Helper Modules**: To simplify this, the engine uses `BinaryOp` and `TernaryOp` modules. They abstract the "rent-fill-apply-dispose" lifecycle using F#'s `use` keyword.
+- **Disposal**: `use` ensures that `IDisposable` resources are cleaned up in reverse order of their declaration.
 - **Result**: In the `StackBufferProvider`, the last rented buffer is always the first one released, moving the stack pointer back correctly and preventing data corruption or "leaks" within the pool.
 
 ## The Span Limitation Workaround
@@ -36,12 +37,13 @@ Since `Span<T>` is a `ref struct`, it cannot be stored in class fields or used a
 
 ## RenderContext and Environment
 
-The `RenderContext` now carries environment data required for DSP operations:
+The `RenderContext` carries environment data required for DSP operations:
 - `Scratch`: The active memory strategy.
 - `SampleRate`: Essential for calculating oscillator frequencies and filter coefficients.
 
 ## Mathematical Building Blocks
 
 Complex operations are built from simple, inlined math:
-- `Interpolate.lerp`: Standard linear interpolation $a + t(b - a)$.
-- `Mix`: A bipolar control signal ($[-1, 1]$) is mapped to a unipolar weight ($[0, 1]$) for crossfading between two inputs.
+- `Interpolate.lerp`: Standard linear interpolation $a + (b - a) \times t$.
+- `Mix`: A bipolar control signal ($[-1, 1]$) is mapped to a unipolar weight ($w = (c + 1) \times 0.5$) for crossfading between two inputs $x$ and $y$: $x + (y - x) \times w$.
+- `Oscillator`: Tracks a `phase` ($[0, 1)$) that increments by $\text{freq} / \text{sampleRate}$ each sample. The `Shape` method transforms this phase into a waveform (Sine, Saw, etc.).
